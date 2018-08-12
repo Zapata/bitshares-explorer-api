@@ -44,9 +44,6 @@ def header():
     j["result"]["bts_market_cap"] = int(market_cap/100000000)
     #print j["result"][0]["bts_market_cap"]
 
-    ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
-    result3 = ws.recv()
-    j3 = json.loads(result3)    
     if config.TESTNET != 1: # Todo: had to do something else for the testnet
         ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
         result3 = ws.recv()
@@ -55,8 +52,6 @@ def header():
         j["result"]["quote_volume"] = j3["result"]["quote_volume"]
     else:
         j["result"]["quote_volume"] = 0
-
-    j["result"]["quote_volume"] = j3["result"]["quote_volume"]
 
     ws.send('{"id":1, "method":"call", "params":[0,"get_global_properties",[]]}')
     result5 = ws.recv()
@@ -137,12 +132,15 @@ def get_operation():
     #print j["result"][0]["bts_market_cap"]
 
 
-    ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
-    result3 = ws.recv()
-    j3 = json.loads(result3)
-    #print j3["result"]["quote_volume"]
-    j["result"][0]["quote_volume"] = j3["result"]["quote_volume"]
+    if config.TESTNET != 1: # Todo: had to do something else for the testnet
+        ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
+        result3 = ws.recv()
+        j3 = json.loads(result3)
 
+        j["result"][0]["quote_volume"] = j3["result"]["quote_volume"]
+    else:
+        j["result"][0]["quote_volume"] = 0
+    
     # TODO: making this call with every operation is not very efficient as this are static properties
     ws.send('{"id":1, "method":"call", "params":[0,"get_global_properties",[]]}')
     result5 = ws.recv()
@@ -193,11 +191,14 @@ def operation_full():
     #print j["result"][0]["bts_market_cap"]
 
 
-    ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
-    result3 = ws.recv()
-    j3 = json.loads(result3)
-    #print j3["result"]["quote_volume"]
-    j["result"][0]["quote_volume"] = j3["result"]["quote_volume"]
+    if config.TESTNET != 1: # Todo: had to do something else for the testnet
+        ws.send('{"id":1, "method":"call", "params":[0,"get_24_volume",["BTS", "OPEN.BTC"]]}')
+        result3 = ws.recv()
+        j3 = json.loads(result3)
+
+        j["result"][0]["quote_volume"] = j3["result"]["quote_volume"]
+    else:
+        j["result"][0]["quote_volume"] = 0
 
     # TODO: making this call with every operation is not very efficient as this are static properties
     ws.send('{"id":1, "method":"call", "params":[0,"get_global_properties",[]]}')
@@ -1395,9 +1396,8 @@ def get_limit_orders():
 
 @app.route('/get_call_orders')
 def get_call_orders():
-    base = request.args.get('base')
-    quote = request.args.get('quote')
-    ws.send('{"id":1, "method":"call", "params":[0,"get_call_orders",["' + base + '", "' + quote + '", 100]]}')
+    asset = request.args.get('asset_id')
+    ws.send('{"id":1, "method":"call", "params":[0,"get_call_orders",["' + asset + '", 100]]}')
     result = ws.recv()
     j = json.loads(result)
 
