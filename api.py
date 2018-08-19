@@ -1115,10 +1115,10 @@ def committee_votes():
                     else:
                     	p_vote = "-"
                     	committee_votes[w][c] = id_proxy + ":" + p_vote
+            else:
+		        committee_votes[w][c] = id_proxy + ":-"
 
-            	c = c + 1
-	    else:
-		committee_votes[w][c] = id_proxy + ":-"
+            c = c + 1
 
     #print witnesses_votes
     return jsonify(committee_votes)
