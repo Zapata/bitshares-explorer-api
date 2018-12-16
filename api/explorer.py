@@ -3,7 +3,7 @@ import json
 import psycopg2
 from services.bitshares_websocket_client import BitsharesWebsocketClient, client as bitshares_ws_client
 from services.cache import cache
-import es_wrapper
+import api.es_wrapper
 import config
 
 
